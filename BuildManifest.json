@@ -1,0 +1,20 @@
+{
+	"isRenew": true,
+	"version": "1.0.0",
+	"versionMap": {
+		"1.0.0": {
+			"assetsList": {
+				"Game": [
+					{
+						"assetName": "",
+						"assetDescribe": "Game",
+						"assetMd5": "1.0",
+						"assetUrl": ""
+					}
+				],
+				"Engine": []
+			},
+			"describe": "版本更新描述"
+		}
+	}
+}
