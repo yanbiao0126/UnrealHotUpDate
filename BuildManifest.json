@@ -1,6 +1,6 @@
 {
 	"isRenew": true,
-	"version": 1.2,
+	"version": 1.1,
 	"versionMap": {
 		"1.0": {
 			"assetsList": {
@@ -8,8 +8,8 @@
 					{
 						"assetName": "TestHot-WindowsNoEditor.pak",
 						"assetDescribe": "Game",
-						"assetMd5": "ceb9a84dc6e6ec78b3fef231d51724e8",
-						"assetUrl": "paks/TestHot-WindowsNoEditor.pak"
+						"assetMd5": "05537154879f9b6ef0f47ed2d3e1ab5a",
+						"assetUrl": "TestHot-WindowsNoEditor.pak"
 					}
 				],
 				"Engine": []
@@ -22,13 +22,13 @@
 					{
 						"assetName": "TestHot-WindowsNoEditor_0_P.pak",
 						"assetDescribe": "Game",
-						"assetMd5": "03c67d16d4f17d6edaafc2175189c3ba",
-						"assetUrl": "paks/TestHot-WindowsNoEditor_0_P.pak"
+						"assetMd5": "8be4287e6d9c81a86f9113e9f0a105cb",
+						"assetUrl": "TestHot-WindowsNoEditor_0_P.pak"
 					}
 				],
 				"Engine": []
 			},
-			"describe": "1.0版本更新"
+			"describe": "版本更新描述"
 		}
 	}
 }

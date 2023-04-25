@@ -17,12 +17,22 @@ void AHotGameModeBase::StartPlay()
 AHotGameModeBase::AHotGameModeBase()
 {
 	OnComplete.BindUFunction(this, FName("HotComplete"));
+	OnDownloadProgress.BindUFunction(this, FName("HotProgress"));
+	curGameMode->onEnterTriggerDy_10.BindUFunction(this, STATIC_FUNCTION_FNAME(TEXT("AFOnEnterTriggerDy_Actor::onEnterTriggerDy_10")));
 }
 
 void AHotGameModeBase::DownLoadGameFile(int32 i)
 {
 	// 判断是否下载完毕
-	if (i >= GameDataList.Num()) return;
+	if (i >= GameDataList.Num())
+	{
+		if (DownLoadCompleteNum == GameDataList.Num())
+		{
+			// 更新结束
+			OnUpDateEnd.Broadcast();
+		}
+		return;
+	};
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();;
 	FGameDataList data = GameDataList[i];
 	// pakURL
@@ -40,6 +50,7 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 		}
 		else
 		{
+			DownLoadCompleteNum++;
 			// 下载下一个文件
 			DownLoadGameFile(i + 1);
 			return;
@@ -120,3 +131,9 @@ void AHotGameModeBase::HotComplete(EDownloadToStorageResult result)
 	DownLoadCompleteNum++;
 	OnUpDateEnd.Broadcast();
 }
+
+void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLength)
+{
+	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d/%d"), BytesReceived, ContentLength);
+}
+

@@ -42,7 +42,10 @@ UCLASS()
 class HOTUPDATE_API AHotGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	FOnDownloadProgress OnDownloadProgress;
 	
+	FOnFileToStorageDownloadComplete OnComplete;
 public:
 	virtual void StartPlay() override;
 
@@ -95,10 +98,8 @@ protected:
 	void OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg);
 	// 获取服务器json文件
 	void GetServerJson();
-	
-	FOnDownloadProgress OnDownloadProgress;
-	
-	FOnFileToStorageDownloadComplete OnComplete;
 
 	void HotComplete(EDownloadToStorageResult result);
+	
+	void HotDownloadProgress(int32 BytesReceived, int32 ContentLength);
 };
