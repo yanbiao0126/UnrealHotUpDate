@@ -5,11 +5,15 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 #include "CoreMinimal.h"
+#include "BaseFilesDownloader.h"
+#include "FileToStorageDownloader.h"
 #include "GameFramework/GameModeBase.h"
 #include "HotGameModeBase.generated.h"
 
 // 动态委托
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpDateGame, bool, isUpdate);
+// 动态委托
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpDateEnd);
 
 USTRUCT(BlueprintType)
 struct FGameDataList
@@ -42,16 +46,22 @@ class HOTUPDATE_API AHotGameModeBase : public AGameModeBase
 public:
 	virtual void StartPlay() override;
 
+	AHotGameModeBase();
+	
 	UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新游戏内容"))
 	FUpDateGame OnUpDateGame;
 
+	// 更新结束
+	UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新结束"))
+	FUpDateEnd OnUpDateEnd;
+
 	// 服务器json路径
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotUpdate")
-	FString ServerURL="http://led226.com/ue";
+	FString ServerURL="http://199.255.99.237/ue";
 
 	// 版本号
-	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="游戏版本号"))
-	FString GameVersion="1.0.0";
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "HotUpdate", meta=(DisplayName="游戏版本号"))
+	float GameVersion=1.0;
 
 	// 更新版本号
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="更新版本号"))
@@ -64,9 +74,31 @@ public:
 	// 游戏更新列表
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="游戏更新列表"))
 	TArray<FGameDataList> GameDataList;
+
+	// 下载更新文件
+	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载更新文件"))
+	void DownLoadGameFile(int32 i=0);
+
+	// 校验md5
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "HotUpdate", meta=(DisplayName="校验md5"))
+	bool CheckMd5(FString filePath, FString md5);
+	
+	// 需要下载的版本号
+	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="需要下载的版本号"))
+	TArray<FString> NeedDownLoadVersion;
+
+	// 下载完数量
+	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="下载完数量"))
+	int32 DownLoadCompleteNum=0;
 	
 protected:
 	void OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg);
 	// 获取服务器json文件
 	void GetServerJson();
+	
+	FOnDownloadProgress OnDownloadProgress;
+	
+	FOnFileToStorageDownloadComplete OnComplete;
+
+	void HotComplete(EDownloadToStorageResult result);
 };

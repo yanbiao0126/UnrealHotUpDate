@@ -28,7 +28,8 @@ public class HotUpdate : ModuleRules
 				"Core",
 				"HTTP", 
 				"Json",
-				"JsonUtilities"
+				"JsonUtilities",
+				"RuntimeFilesDownloader"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
