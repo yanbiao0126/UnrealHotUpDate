@@ -18,7 +18,6 @@ AHotGameModeBase::AHotGameModeBase()
 {
 	OnComplete.BindUFunction(this, FName("HotComplete"));
 	OnDownloadProgress.BindUFunction(this, FName("HotProgress"));
-	curGameMode->onEnterTriggerDy_10.BindUFunction(this, STATIC_FUNCTION_FNAME(TEXT("AFOnEnterTriggerDy_Actor::onEnterTriggerDy_10")));
 }
 
 void AHotGameModeBase::DownLoadGameFile(int32 i)
