@@ -11,8 +11,6 @@
 #include "HotGameModeBase.generated.h"
 
 // 动态委托
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpDateGame, bool, isUpdate);
-// 动态委托
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpDateEnd);
 
 USTRUCT(BlueprintType)
@@ -51,8 +49,8 @@ public:
 
 	AHotGameModeBase();
 	
-	UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新游戏内容"))
-	FUpDateGame OnUpDateGame;
+	// UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新游戏内容"))
+	// FUpDateGame OnUpDateGame;
 
 	// 更新结束
 	UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新结束"))
@@ -93,13 +91,28 @@ public:
 	// 下载完数量
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="下载完数量"))
 	int32 DownLoadCompleteNum=0;
+
+	
+	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载完毕"))
+	void HotComplete(EDownloadToStorageResult result);
+
+	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载更进度"))
+	void HotDownloadProgress(int32 BytesReceived, int32 ContentLength);
+
+	// 下载完执行
+	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载完执行"))
+	void HotDownloadComplete();
+	
+	// 文件长度
+	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="文件长度"))
+	int32 FileLength=0;
+	
+	// 当前下载进度
+	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="当前下载进度"))
+	int32 CurrentProgress=0;
 	
 protected:
 	void OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg);
 	// 获取服务器json文件
 	void GetServerJson();
-
-	void HotComplete(EDownloadToStorageResult result);
-	
-	void HotDownloadProgress(int32 BytesReceived, int32 ContentLength);
 };

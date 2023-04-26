@@ -16,9 +16,8 @@ void AHotGameModeBase::StartPlay()
 
 AHotGameModeBase::AHotGameModeBase()
 {
-	OnComplete.BindUFunction(this, FName("HotComplete"));
-	OnDownloadProgress.BindUFunction(this, FName("HotProgress"));
-	curGameMode->onEnterTriggerDy_10.BindUFunction(this, STATIC_FUNCTION_FNAME(TEXT("AFOnEnterTriggerDy_Actor::onEnterTriggerDy_10")));
+	OnComplete.BindDynamic(this, &AHotGameModeBase::HotComplete);
+	OnDownloadProgress.BindDynamic(this, &AHotGameModeBase::HotDownloadProgress);
 }
 
 void AHotGameModeBase::DownLoadGameFile(int32 i)
@@ -103,8 +102,6 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 						GameDataList.Append(GameList);
 					}
 				}
-				DownLoadGameFile(0);
-				OnUpDateGame.Broadcast(isRun);
 			}
 			UE_LOG(LogTemp, Warning, TEXT("JsonStr: %s"), *JsonStr);
 		}
@@ -113,6 +110,7 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HttpResponse is not valid"));
 	}
+	DownLoadGameFile(0);
 }
 
 void AHotGameModeBase::GetServerJson()
@@ -129,11 +127,23 @@ void AHotGameModeBase::HotComplete(EDownloadToStorageResult result)
 {
 	UE_LOG(LogTemp, Warning, TEXT("HotComplete"));
 	DownLoadCompleteNum++;
-	OnUpDateEnd.Broadcast();
+	HotDownloadComplete();
 }
 
 void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLength)
 {
 	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d/%d"), BytesReceived, ContentLength);
+	CurrentProgress = BytesReceived;
+	FileLength = ContentLength;
+	
+}
+
+void AHotGameModeBase::HotDownloadComplete()
+{
+	if (DownLoadCompleteNum == GameDataList.Num())
+	{
+		// 更新结束
+		OnUpDateEnd.Broadcast();
+	}
 }
 
