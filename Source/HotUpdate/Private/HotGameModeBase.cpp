@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "HotGameModeBase.h"
 #include "HttpModule.h"
 #include "JsonObjectConverter.h"
@@ -32,10 +31,11 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 		}
 		return;
 	};
-	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();;
+	IPlatformFile &PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	;
 	FGameDataList data = GameDataList[i];
 	// pakURL
-	FString pakURL = ServerURL+ TEXT("/") +data.assetUrl;
+	FString pakURL = ServerURL + TEXT("/") + data.assetUrl;
 	// 获取pak目录
 	FString pakPath = FPaths::ProjectContentDir().Append(TEXT("Paks/")).Append(data.assetName);
 	UE_LOG(LogTemp, Warning, TEXT("pakPath:%s     urlPak:%s"), *pakPath, *pakURL);
@@ -55,7 +55,7 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 			return;
 		}
 	}
-	
+
 	// 下载文件
 	UFileToStorageDownloader::DownloadFileToStorage(pakURL, pakPath, 0, TEXT(""), OnDownloadProgress, OnComplete);
 	// 下载下一个文件
@@ -68,7 +68,7 @@ bool AHotGameModeBase::CheckMd5(FString filePath, FString md5)
 }
 
 void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest,
-                                          TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg)
+																					TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg)
 {
 	if (bArg && HttpResponse.IsValid())
 	{
@@ -80,7 +80,8 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 			if (FJsonSerializer::Deserialize(JsonReader, RootJsonObj))
 			{
 				bool isRun = RootJsonObj->GetBoolField(TEXT("isRenew"));
-				if (!isRun) return;
+				if (!isRun)
+					return;
 				GameNewVersion = RootJsonObj->GetStringField(TEXT("version"));
 				// if (GameVersion >= FCString::Atod(*GameNewVersion)) return;
 				TSharedPtr<FJsonObject> versionMap = RootJsonObj->GetObjectField(TEXT("versionMap"));
@@ -135,7 +136,6 @@ void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLen
 	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d/%d"), BytesReceived, ContentLength);
 	CurrentProgress = BytesReceived;
 	FileLength = ContentLength;
-	
 }
 
 void AHotGameModeBase::HotDownloadComplete()
@@ -146,4 +146,3 @@ void AHotGameModeBase::HotDownloadComplete()
 		OnUpDateEnd.Broadcast();
 	}
 }
-
