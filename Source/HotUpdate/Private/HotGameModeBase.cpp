@@ -32,7 +32,6 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 		return;
 	};
 	IPlatformFile &PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-	;
 	FGameDataList data = GameDataList[i];
 	// pakURL
 	FString pakURL = ServerURL + TEXT("/") + data.assetUrl;
@@ -80,8 +79,7 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 			if (FJsonSerializer::Deserialize(JsonReader, RootJsonObj))
 			{
 				bool isRun = RootJsonObj->GetBoolField(TEXT("isRenew"));
-				if (!isRun)
-					return;
+				if (!isRun) return;
 				GameNewVersion = RootJsonObj->GetStringField(TEXT("version"));
 				// if (GameVersion >= FCString::Atod(*GameNewVersion)) return;
 				TSharedPtr<FJsonObject> versionMap = RootJsonObj->GetObjectField(TEXT("versionMap"));
@@ -92,7 +90,7 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 				for (auto key : keys)
 				{
 					TArray<FGameDataList> GameList;
-					if (FCString::Atof(*key) > GameVersion)
+					if (FCString::Atof(*key) <= FCString::Atof(*GameNewVersion))
 					{
 						NeedDownLoadVersion.Add(key);
 						TSharedPtr<FJsonObject> VersionData = versionMap->GetObjectField(key);
