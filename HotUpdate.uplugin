@@ -19,7 +19,8 @@
 		{
 			"Name": "HotUpdate",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": ["Win64"]
 		}
 	],
 	"Plugins": [
