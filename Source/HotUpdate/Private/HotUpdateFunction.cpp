@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HotUpdateFunction.h"
-#include "BaseFilesDownloader.h"
 
-FString UHotUpdateFunction::GetFileMd5(FString filePath)
+FString UHotUpdateFunction::GetFileMd5(const FString filePath)
 {
 	TArray<uint8> Result;
-	UBaseFilesDownloader::LoadFileToArray(filePath, Result);
+	FFileHelper::LoadFileToArray(Result, *filePath);
 	return FMD5::HashBytes(Result.GetData(), Result.Num());
 }

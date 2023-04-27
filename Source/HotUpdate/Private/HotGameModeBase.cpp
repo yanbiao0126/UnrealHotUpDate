@@ -3,7 +3,6 @@
 #include "HotGameModeBase.h"
 #include "HttpModule.h"
 #include "JsonObjectConverter.h"
-#include "FileToStorageDownloader.h"
 #include "HotUpdateFunction.h"
 
 void AHotGameModeBase::StartPlay()
@@ -11,12 +10,6 @@ void AHotGameModeBase::StartPlay()
 	Super::StartPlay();
 
 	GetServerJson();
-}
-
-AHotGameModeBase::AHotGameModeBase()
-{
-	OnComplete.BindDynamic(this, &AHotGameModeBase::HotComplete);
-	OnDownloadProgress.BindDynamic(this, &AHotGameModeBase::HotDownloadProgress);
 }
 
 void AHotGameModeBase::DownLoadGameFile(int32 i)
@@ -38,6 +31,13 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 	// 获取pak目录
 	FString pakPath = FPaths::ProjectContentDir().Append(TEXT("Paks/")).Append(data.assetName);
 	UE_LOG(LogTemp, Warning, TEXT("pakPath:%s     urlPak:%s"), *pakPath, *pakURL);
+	FString Path, Filename, Extension; 
+	FPaths::Split(pakPath, Path, Filename, Extension);
+	// 判断目录是否存在
+	if (!PlatformFile.DirectoryExists(*Path))
+	{
+		PlatformFile.CreateDirectory(*Path);
+	}
 	if (PlatformFile.FileExists(*pakPath))
 	{
 		if (!CheckMd5(pakPath, data.assetMd5))
@@ -56,7 +56,10 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 	}
 
 	// 下载文件
-	UFileToStorageDownloader::DownloadFileToStorage(pakURL, pakPath, 0, TEXT(""), OnDownloadProgress, OnComplete);
+	UAsyncNetWork* asyncNetWork = UAsyncNetWork::AsyncHttpDownload(pakURL, pakPath);
+	asyncNetWork->OnProgress.BindDynamic(this, &AHotGameModeBase::HotDownloadProgress);
+	asyncNetWork->OnComplete.BindDynamic(this, &AHotGameModeBase::HotComplete);
+	// UFileToStorageDownloader::DownloadFileToStorage(pakURL, pakPath, 0, TEXT(""), OnDownloadProgress, OnComplete);
 	// 下载下一个文件
 	DownLoadGameFile(i + 1);
 }
@@ -122,11 +125,15 @@ void AHotGameModeBase::GetServerJson()
 	request->ProcessRequest();
 }
 
-void AHotGameModeBase::HotComplete(EDownloadToStorageResult result)
+void AHotGameModeBase::HotComplete(bool result)
 {
 	UE_LOG(LogTemp, Warning, TEXT("HotComplete"));
 	DownLoadCompleteNum++;
-	HotDownloadComplete();
+	if (DownLoadCompleteNum == GameDataList.Num())
+	{
+		// 更新结束
+		OnUpDateEnd.Broadcast();
+	}
 }
 
 void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLength)
@@ -134,13 +141,4 @@ void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLen
 	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d/%d"), BytesReceived, ContentLength);
 	CurrentProgress = BytesReceived;
 	FileLength = ContentLength;
-}
-
-void AHotGameModeBase::HotDownloadComplete()
-{
-	if (DownLoadCompleteNum == GameDataList.Num())
-	{
-		// 更新结束
-		OnUpDateEnd.Broadcast();
-	}
 }

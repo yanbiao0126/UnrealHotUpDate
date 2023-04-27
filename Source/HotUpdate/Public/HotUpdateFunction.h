@@ -18,5 +18,5 @@ class HOTUPDATE_API UHotUpdateFunction : public UBlueprintFunctionLibrary
 public:
 	// 获取文件md5
 	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="计算md5"))
-	static FString GetFileMd5(FString filePath);
+	static FString GetFileMd5(const FString filePath);
 };

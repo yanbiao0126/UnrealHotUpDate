@@ -14,19 +14,12 @@
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": true,
-	"EnabledByDefault": false,
 	"Modules": [
 		{
 			"Name": "HotUpdate",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"WhitelistPlatforms": ["Win64"]
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "RuntimeFilesDownloader",
-			"Enabled": true
 		}
 	]
 }

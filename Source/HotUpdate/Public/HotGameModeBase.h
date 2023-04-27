@@ -5,9 +5,8 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 #include "CoreMinimal.h"
-#include "BaseFilesDownloader.h"
-#include "FileToStorageDownloader.h"
 #include "GameFramework/GameModeBase.h"
+#include "AsyncNetWork.h"
 #include "HotGameModeBase.generated.h"
 
 // 动态委托
@@ -40,14 +39,8 @@ UCLASS()
 class HOTUPDATE_API AHotGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-
-	FOnDownloadProgress OnDownloadProgress;
-	
-	FOnFileToStorageDownloadComplete OnComplete;
 public:
 	virtual void StartPlay() override;
-
-	AHotGameModeBase();
 	
 	// UPROPERTY(BlueprintAssignable, Category = "HotUpdate", meta=(DisplayName="更新游戏内容"))
 	// FUpDateGame OnUpDateGame;
@@ -93,16 +86,10 @@ public:
 	int32 DownLoadCompleteNum=0;
 
 	
-	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载完毕"))
-	void HotComplete(EDownloadToStorageResult result);
+	void HotComplete(bool result);
 
-	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载更进度"))
 	void HotDownloadProgress(int32 BytesReceived, int32 ContentLength);
 
-	// 下载完执行
-	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载完执行"))
-	void HotDownloadComplete();
-	
 	// 文件长度
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="文件长度"))
 	int32 FileLength=0;
