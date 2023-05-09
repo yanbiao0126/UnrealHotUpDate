@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HotGameModeBase.h"
-#include "HttpModule.h"
 #include "JsonObjectConverter.h"
 #include "HotUpdateFunction.h"
 
