@@ -9,6 +9,7 @@
 #include "AsyncNetWork.h"
 #include "HAL/PlatformFileManager.h"
 #include "Misc/Paths.h"
+#include "GenericPlatform/GenericPlatformFile.h"
 #include "HotGameModeBase.generated.h"
 
 // 动态委托
