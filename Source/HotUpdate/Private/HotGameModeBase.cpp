@@ -48,7 +48,7 @@ void AHotGameModeBase::DownLoadGameFile()
 			// 下载下一个文件
 			DownLoadCompleteNum++;
 			// DownLoadGameFile(DownLoadCompleteNum);
-			return;
+			// return;
 		}
 	}
 	// 下载文件
