@@ -3,6 +3,7 @@
 #include "HotGameModeBase.h"
 #include "JsonObjectConverter.h"
 #include "HotUpdateFunction.h"
+#include "HttpModule.h"
 
 void AHotGameModeBase::StartPlay()
 {
@@ -11,20 +12,17 @@ void AHotGameModeBase::StartPlay()
 	GetServerJson();
 }
 
-void AHotGameModeBase::DownLoadGameFile(int32 i)
+void AHotGameModeBase::DownLoadGameFile()
 {
 	// 判断是否下载完毕
-	if (i >= GameDataList.Num())
+	if (DownLoadCompleteNum == GameDataList.Num())
 	{
-		if (DownLoadCompleteNum == GameDataList.Num())
-		{
-			// 更新结束
-			OnUpDateEnd.Broadcast();
-		}
+		// 更新结束
+		OnUpDateEnd.Broadcast();
 		return;
-	};
+	}
 	IPlatformFile &PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
-	FGameDataList data = GameDataList[i];
+	FGameDataList data = GameDataList[DownLoadCompleteNum];
 	// pakURL
 	FString pakURL = ServerURL + TEXT("/") + data.assetUrl;
 	// 获取pak目录
@@ -47,20 +45,19 @@ void AHotGameModeBase::DownLoadGameFile(int32 i)
 		}
 		else
 		{
-			DownLoadCompleteNum++;
 			// 下载下一个文件
-			DownLoadGameFile(i + 1);
+			DownLoadCompleteNum++;
+			// DownLoadGameFile(DownLoadCompleteNum);
 			return;
 		}
 	}
-
 	// 下载文件
 	UAsyncNetWork* asyncNetWork = UAsyncNetWork::AsyncHttpDownload(pakURL, pakPath);
 	asyncNetWork->OnProgress.BindDynamic(this, &AHotGameModeBase::HotDownloadProgress);
 	asyncNetWork->OnComplete.BindDynamic(this, &AHotGameModeBase::HotComplete);
 	// UFileToStorageDownloader::DownloadFileToStorage(pakURL, pakPath, 0, TEXT(""), OnDownloadProgress, OnComplete);
-	// 下载下一个文件
-	DownLoadGameFile(i + 1);
+	// 下载文件
+	// DownLoadGameFile();
 }
 
 bool AHotGameModeBase::CheckMd5(FString filePath, FString md5)
@@ -68,8 +65,7 @@ bool AHotGameModeBase::CheckMd5(FString filePath, FString md5)
 	return UHotUpdateFunction::GetFileMd5(filePath).Equals(md5);
 }
 
-void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest,
-																					TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg)
+void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg)
 {
 	if (bArg && HttpResponse.IsValid())
 	{
@@ -111,7 +107,7 @@ void AHotGameModeBase::OnResponseReceived(TSharedPtr<IHttpRequest, ESPMode::Thre
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HttpResponse is not valid"));
 	}
-	DownLoadGameFile(0);
+	DownLoadGameFile();
 }
 
 void AHotGameModeBase::GetServerJson()
@@ -128,16 +124,18 @@ void AHotGameModeBase::HotComplete(bool result)
 {
 	UE_LOG(LogTemp, Warning, TEXT("HotComplete"));
 	DownLoadCompleteNum++;
-	if (DownLoadCompleteNum == GameDataList.Num())
-	{
-		// 更新结束
-		OnUpDateEnd.Broadcast();
-	}
+	// 下载下一个文件
+	DownLoadGameFile();
+	// if (DownLoadCompleteNum == GameDataList.Num())
+	// {
+	// 	// 更新结束
+	// 	OnUpDateEnd.Broadcast();
+	// }
 }
 
-void AHotGameModeBase::HotDownloadProgress(int32 BytesReceived, int32 ContentLength)
+void AHotGameModeBase::HotDownloadProgress(int32 ContentLength, int32 BytesReceived)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d/%d"), BytesReceived, ContentLength);
+	UE_LOG(LogTemp, Warning, TEXT("HotDownloadProgress: %d / %d"), BytesReceived, ContentLength);
 	CurrentProgress = BytesReceived;
 	FileLength = ContentLength;
 }

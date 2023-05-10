@@ -50,8 +50,8 @@ void UAsyncNetWork::OnRequestProgress(TSharedPtr<IHttpRequest, ESPMode::ThreadSa
 {
 	if (HttpRequest->GetResponse()->GetContentLength() > 0)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("下载进度:%f"), (float)BytesSent / (float)BytesReceived);
-		OnProgress.ExecuteIfBound(BytesSent, BytesReceived);
+		// UE_LOG(LogTemp,Warning,TEXT("下载进度:%f"), (float)BytesSent / (float)BytesReceived);
+		OnProgress.ExecuteIfBound(HttpRequest->GetResponse()->GetContentLength(), BytesReceived);
 	}
 }
 

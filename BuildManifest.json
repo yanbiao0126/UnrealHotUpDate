@@ -6,10 +6,10 @@
 			"assetsList": {
 				"Game": [
 					{
-						"assetName": "TestHot-WindowsNoEditor.pak",
+						"assetName": "pakchunk0-WindowsNoEditor.pak",
 						"assetDescribe": "Game",
-						"assetMd5": "05537154879f9b6ef0f47ed2d3e1ab5a",
-						"assetUrl": "TestHot-WindowsNoEditor.pak"
+						"assetMd5": "cb2c6ca3ee4093ecec12620be05b3084",
+						"assetUrl": "pakchunk0-WindowsNoEditor.pak"
 					}
 				],
 				"Engine": []
@@ -20,10 +20,10 @@
 			"assetsList": {
 				"Game": [
 					{
-						"assetName": "TestHot-WindowsNoEditor_0_P.pak",
+						"assetName": "pakchunk0-WindowsNoEditor_0_P.pak",
 						"assetDescribe": "Game",
-						"assetMd5": "8be4287e6d9c81a86f9113e9f0a105cb",
-						"assetUrl": "TestHot-WindowsNoEditor_0_P.pak"
+						"assetMd5": "41ac9ffb939169372bd51fc867fc5bd0",
+						"assetUrl": "pakchunk0-WindowsNoEditor_0_P.pak"
 					}
 				],
 				"Engine": []

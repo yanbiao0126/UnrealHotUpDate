@@ -33,6 +33,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate")
 	FString assetUrl;
 	
+	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate")
+	int32 assetSize;
 };
 
 /**
@@ -74,7 +76,7 @@ public:
 
 	// 下载更新文件
 	UFUNCTION(BlueprintCallable, Category = "HotUpdate", meta=(DisplayName="下载更新文件"))
-	void DownLoadGameFile(int32 i=0);
+	void DownLoadGameFile();
 
 	// 校验md5
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "HotUpdate", meta=(DisplayName="校验md5"))
@@ -88,10 +90,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="下载完数量"))
 	int32 DownLoadCompleteNum=0;
 
-	
+	UFUNCTION()
 	void HotComplete(bool result);
 
-	void HotDownloadProgress(int32 BytesReceived, int32 ContentLength);
+	UFUNCTION()
+	void HotDownloadProgress(int32 ContentLength, int32 BytesReceived);
 
 	// 文件长度
 	UPROPERTY(BlueprintReadOnly, Category = "HotUpdate", meta=(DisplayName="文件长度"))

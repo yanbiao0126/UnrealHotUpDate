@@ -11,7 +11,7 @@
 #include "AsyncNetWork.generated.h"
 
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FHttp_Progress, int32 , I, int32, Arg);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FHttp_Progress, int32, I, int32, Arg);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FHttp_Complete, bool, bArg);
 /**
  * 
@@ -28,8 +28,12 @@ public:
 	static UAsyncNetWork* AsyncHttpDownload(FString URL, FString SavePath);
 
 	void OnRequestComplete(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse, bool bArg);
+
 	void OnRequestProgress(TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> HttpRequest, int32 BytesSent, int32 BytesReceived);
+
+	UFUNCTION()
 	void Start(const FString URL, const FString SavePath);
 
+	UPROPERTY()
 	FString FileSavePath;
 };
